@@ -1,0 +1,2 @@
+grequests
+pycryptodome
