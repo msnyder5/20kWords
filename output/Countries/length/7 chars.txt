@@ -13,6 +13,7 @@ bonaire
 burundi
 comoros
 croatia
+curaçao
 czechia
 denmark
 ecuador
@@ -36,6 +37,7 @@ morocco
 myanmar
 namibia
 nigeria
+réunion
 romania
 senegal
 somalia

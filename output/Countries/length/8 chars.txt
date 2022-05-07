@@ -5,7 +5,6 @@ bulgaria
 cambodia
 cameroon
 colombia
-curaçao
 djibouti
 dominica
 eswatini
@@ -22,7 +21,6 @@ pakistan
 paraguay
 pitcairn
 portugal
-réunion
 slovakia
 slovenia
 srilanka

@@ -89,7 +89,7 @@ class ENSListing():
 
 # Get a list of all of the valid words.
 def getwords(dirname: str):
-    with open(f"./input/{dirname}.txt") as txtfile:
+    with open(f"./input/{dirname}.txt", encoding='utf-8') as txtfile:
         lines = txtfile.readlines()
     print(f"\nBulk searching {len(lines)} words in {dirname}.txt...")
     words = [line[:-1] if '\n' in line else line for line in lines]
@@ -155,12 +155,12 @@ def makeoutputdir(dirname: str):
 def saveavailable(domains: list[ENSListing]):
     enslist = [i.name for i in domains if i._enstype in [ENSType.NEW, ENSType.EXPIRED]]
     if not enslist: return
-    with open(f"available.txt", 'w') as file:
+    with open(f"available.txt", 'w', encoding='utf-8') as file:
         file.write("\n".join(enslist))
 
 # Saves valid words and words seperated by length
 def savevalid(words: list[str]):
-    with open(f"valid.txt", 'w') as file:
+    with open(f"valid.txt", 'w', encoding='utf-8') as file:
         file.write("\n".join(words))
 
 def savelength(words: list[str]):
@@ -170,14 +170,14 @@ def savelength(words: list[str]):
         shutil.rmtree('./length')
         return
     for i, iwords in lengthdict.items():
-        with open(f"./length/{i} chars.txt", 'w') as file:
+        with open(f"./length/{i} chars.txt", 'w', encoding='utf-8') as file:
             file.write("\n".join(iwords))
 
 # Saves a CSV containing data for all of the domains provided
 def savemaincsv(domains: list[ENSListing]):
     enslist = ["Name,Current Owner,Length,Status,Premium,URL,Created,Registered,Expires,Grace Period Ends,Price Premium Ends"]
     enslist += [i.getcsv() for i in domains]
-    with open(f"domains.csv", 'w') as file:
+    with open(f"domains.csv", 'w', encoding='utf-8') as file:
         file.write("\n".join(enslist))
 
 # Update readme and print summary
