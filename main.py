@@ -162,7 +162,7 @@ def readmeandprint(start: datetime.datetime,
     pastday = len(['' for i in domainobjs if i.registrationdate and i.registrationdate > (datetime.datetime.now()-datetime.timedelta(days=1))])
     elapsed = (datetime.datetime.now() - start).total_seconds()
     totalwords = numvalid+numinvalid
-    updatereadme(numvalid, numavailable, pastday)
+    updatereadme(numavailable, pastday)
     print(f"ENS bulk search completed in {elapsed:.2f} seconds.\n"
           "Files have been outputted to ./output\n"
           f"{totalwords} Words Searched\n"
@@ -173,14 +173,11 @@ def readmeandprint(start: datetime.datetime,
           f"{pastday} Registered in the past day ({(pastday*100.0)/(numavailable+pastday):.2f}%)\n")
 
 # Autoupdate readme with new statistics (can be disabled)
-def updatereadme(numvalid: int, numavailable: int, pastday: int):
+def updatereadme(numavailable: int, pastday: int):
     with open("README.md", 'r', encoding='utf-16') as readme:
         rmstr = readme.read()
-        rmstr = re.sub(r"As of last check \([^\)]+\) \d+ words are available \(\d+\.\d+%\)",
-                       f"As of last check ({datetime.datetime.now().strftime('%Y-%m-%d %X')} EST) {numavailable} words are available ({(numavailable*100.0)/numvalid:.2f}%)",
-                       rmstr)
-        rmstr = re.sub(r"with \d+ sales in the past day",
-                       f"with {pastday} sales in the past day",
+        rmstr = re.sub(r"As of last update, \d+ words are available, with \d+ sales in the past day",
+                       f"As of last update, {numavailable} words are available, with {pastday} sales in the past day",
                        rmstr)
     with open("README.md", 'w', encoding='utf-16') as readme:
         readme.write(rmstr)
