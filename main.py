@@ -5,7 +5,6 @@ from enum import Enum
 import datetime
 from Crypto.Hash import keccak
 from dataclasses import dataclass
-import chardet
 
 INPUT = './input/top20kwords.txt'
 AVAILABLE = 'available'
@@ -127,18 +126,8 @@ def makeoutputdir():
 
 # Saves a text file with all the non-premium words
 def saveavailable(domains: list[ENSListing]):
-    domains.sort(key=lambda x: len(x.name))
     enslist = [i.name for i in domains if i._enstype is ENSType.NEW or i._enstype is ENSType.EXPIRED]
     with open(f"./output/{AVAILABLE}.txt", 'w') as file:
-        file.write("\n".join(enslist))
-
-# Saves a CSV containing data for all of the domains provided
-def savemaincsv(domains: list[ENSListing]):
-    domains.sort(key=lambda x: x.registrationdate if x.registrationdate else datetime.datetime.fromtimestamp(0))
-    domains.sort(key=lambda x: x._enstype.value)
-    enslist = ["Name,Length,Status,Premium,Registered,Expires,Grace Period Ends,Price Premium Ends,Hex Token ID,Decimal Token ID,Decimal Token ID Repr"]
-    enslist += [i.getcsv() for i in domains]
-    with open(f"./output/{NAMES}.csv", 'w') as file:
         file.write("\n".join(enslist))
 
 # Saves valid words and words seperated by length
@@ -154,6 +143,13 @@ def savewords(words: list[str]):
             file.write("\n".join(validwords))
         counted += len(validwords)
         length += 1
+
+# Saves a CSV containing data for all of the domains provided
+def savemaincsv(domains: list[ENSListing]):
+    enslist = ["Name,Length,Status,Premium,Registered,Expires,Grace Period Ends,Price Premium Ends,Hex Token ID,Decimal Token ID,Decimal Token ID Repr"]
+    enslist += [i.getcsv() for i in domains]
+    with open(f"./output/{NAMES}.csv", 'w') as file:
+        file.write("\n".join(enslist))
 
 # Update readme and print summary
 def readmeandprint(start: datetime.datetime,
@@ -191,9 +187,14 @@ def updatereadme(numvalid: int, numavailable: int, pastday: int):
 
 def main():
     start = datetime.datetime.now()
+    # Getting data
     words, numinvalid = getwords()
     domaindata = getlistingdata(words)
     domainobjs = getdomains(words, domaindata)
+    # Sort domains by commonality
+    wordsranks = {d: i for i, d in enumerate(words)}
+    domainobjs.sort(key=lambda x: wordsranks[x.name])
+    # Outputs
     makeoutputdir()
     saveavailable(domainobjs)
     savewords(words)
