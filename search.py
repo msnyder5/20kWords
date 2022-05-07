@@ -174,10 +174,23 @@ def savelength(words: list[str]):
             file.write("\n".join(iwords))
 
 # Saves a CSV containing data for all of the domains provided
-def savemaincsv(domains: list[ENSListing]):
+def savedomains(domains: list[ENSListing]):
     enslist = ["Name,Current Owner,Length,Status,Premium,URL,Created,Registered,Expires,Grace Period Ends,Price Premium Ends"]
     enslist += [i.getcsv() for i in domains]
     with open(f"domains.csv", 'w', encoding='utf-8') as file:
+        file.write("\n".join(enslist))
+
+# Saves a CSV containing data for all of the domains provided
+def savewhales(domains: list[ENSListing]):
+    owners = defaultdict(int)
+    for domain in domains:
+        owners[domain.owner] += 1
+    if None in owners.keys(): owners.pop(None)
+    items = [[name, num] for name, num in owners.items()]
+    items.sort(key=lambda x: x[1], reverse=True)
+    enslist = ["Number Held,Address,Opensea"]
+    enslist += [f"{num},{owner},https://opensea.io/{owner}" for owner, num in items]
+    with open(f"whales.csv", 'w', encoding='utf-8') as file:
         file.write("\n".join(enslist))
 
 # Update readme and print summary
@@ -227,7 +240,8 @@ def main():
         if config.AVAILABLE: saveavailable(domainobjs)
         if config.VALID and numinvalid: savevalid(words)
         if config.LENGTH: savelength(words)
-        if config.CSV: savemaincsv(domainobjs)
+        if config.DOMAINS: savedomains(domainobjs)
+        if config.WHALES: savewhales(domainobjs)
         os.chdir('..') if dirname == '20kWordClub' else os.chdir('../..')
         update = config.README and dirname == '20kWordClub'
         readmeandprint(start, words, numinvalid, domainobjs, update)

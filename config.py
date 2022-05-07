@@ -22,7 +22,7 @@ SORTBY = 1
 AVAILABLE = True
 # # # # # # # # # # # # # # # # # # # # # # #
 # domains.csv
-CSV = True
+DOMAINS = True
 # # # # # # # # # # # # # # # # # # # # # # #
 # valid.txt
 # Note: only saved if there are invalid domains
@@ -31,6 +31,8 @@ VALID = True
 # /length/n char
 # Note: only saved if the collection is of multiple lengths
 LENGTH = True
+
+WHALES = True
 # # # # # # # # # # # # # # # # # # # # # # #
 # README.md
 # Note: only saved for 20kWordClub.txt
