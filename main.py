@@ -27,31 +27,52 @@ class ENSType(Enum):
 # Dataclass to store information about a domain
 @dataclass
 class ENSListing():
-    enstype: ENSType
     name: str
-    daysold: float = None
-    premium: float = None
-    hexid: str = None
-    decid: int = None
+    expirydate: datetime.datetime = None
+    registrationdate: datetime.datetime = None
+    # daysold: float = None
+    
+    # Generated 
+    _hexid: str = None
+    _decid: int = None
+    _gracedate: datetime.datetime = None
+    _premiumdate: datetime.datetime = None
+    _enstype: ENSType = None
+    _premium: float = None
     
     # Get Hex and Decimal ID
     def __post_init__(self):
         hexid, decid = getids(self.name)
-        self.hexid = hexid
-        self.decid = decid
+        self._hexid = hexid
+        self._decid = decid
+        if self.registrationdate or self.expirydate:
+            self._gracedate = self.expirydate + datetime.timedelta(days=90.0)
+            self._premiumdate = self.expirydate + datetime.timedelta(days=111.0)
+            daysold = (datetime.datetime.now() - self.expirydate).days
+            if daysold > 111: self._enstype = ENSType.EXPIRED
+            elif daysold > 90:
+                self._enstype = ENSType.PREMIUM
+                # Premium Exponential Decay Formula
+                self._premium = 100_000_000 * (0.5 ** (daysold-90))
+            elif daysold > 0: self._enstype = ENSType.GRACE
+            else: self._enstype = ENSType.OWNED
+        else:
+            self._enstype = ENSType.NEW
 
     # Get line string for csv output
     def getcsv(self):
         attrs = [self.name,
                  len(self.name),
-                 self.enstype.value,
-                 self.premium if self.premium else '',
-                 abs(self.daysold) if self.daysold else '',
-                 abs(self.daysold-90.0) if self.daysold else '',
-                 abs(self.daysold-111.0) if self.daysold else '',
-                 self.hexid,
-                 self.decid]
-        return ",".join([str(i) for i in attrs])
+                 self._enstype.value,
+                 self._premium,
+                 self.registrationdate,
+                 self.expirydate,
+                 self._gracedate,
+                 self._premiumdate,
+                 self._hexid,
+                 self._decid,
+                 f"'{self._decid}'"]
+        return ",".join([str(i) if i else '' for i in attrs])
 
 def getids(name: str, hexonly=False):
     hasher = keccak.new(digest_bits=256)
@@ -86,30 +107,16 @@ def getlistingdata(words: list[str]):
 
 # Create the domain object for each domain
 def getdomains(words: list[str], domaindata: list[dict]):
-    # Current UNIX Epoch
-    now = time.mktime(datetime.datetime.now().timetuple())
     # Add New Domains
     returnednames = [word["labelName"] for word in domaindata]
-    domains = [ENSListing(ENSType.NEW, word) for word in words if word not in returnednames]
+    domains = [ENSListing(word) for word in words if word not in returnednames]
     # Add Other Domains
-    for entry in domaindata:
+    def generateenslisting(entry: dict):
         name = entry["labelName"]
-        # Expiration UNIX Epoch
-        expiry = int(entry["expiryDate"])
-        # Days since expiration
-        daysold = (now-expiry)/(24*60*60)
-        premium = None
-        if daysold > 111:
-            enstype = ENSType.EXPIRED
-        elif daysold > 90:
-            enstype = ENSType.PREMIUM
-            # Premium Exponential Decay Formula
-            premium = 100_000_000 * (0.5 ** (daysold-90))
-        elif daysold > 0:
-            enstype = ENSType.GRACE
-        else:
-            enstype = ENSType.OWNED
-        domains.append(ENSListing(enstype, name, daysold, premium))
+        expirydt = datetime.datetime.fromtimestamp(float(entry["expiryDate"]))
+        registrationdt = datetime.datetime.fromtimestamp(float(entry["registrationDate"]))
+        return ENSListing(name, expirydt, registrationdt)
+    domains += [generateenslisting(entry) for entry in domaindata]
     return domains
 
 def makeoutputdir():
@@ -118,18 +125,21 @@ def makeoutputdir():
 
 # Saves a text file with all the non-premium words
 def saveavailable(domains: list[ENSListing]):
-    enslist = [i.name for i in domains if i.enstype is ENSType.NEW or i.enstype is ENSType.EXPIRED]
+    domains.sort(key=lambda x: len(x.name))
+    enslist = [i.name for i in domains if i._enstype is ENSType.NEW or i._enstype is ENSType.EXPIRED]
     with open(f"./output/{AVAILABLE}.txt", 'w') as file:
         file.write("\n".join(enslist))
-    return len(enslist)
 
 # Saves a CSV containing data for all of the domains provided
 def savemaincsv(domains: list[ENSListing]):
-    enslist = ["Name,Length,Status,Premium,Days Since/Until Grace Period Start,Days Since/Until Grace Period End (Premium Period Start),Days Since/Until Premium Period End,Hex Token ID,Decimal Token ID"]
+    domains.sort(key=lambda x: x.registrationdate if x.registrationdate else datetime.datetime.fromtimestamp(0))
+    domains.sort(key=lambda x: x._enstype.value)
+    enslist = ["Name,Length,Status,Premium,Registered,Expires,Grace Period Ends,Price Premium Ends,Hex Token ID,Decimal Token ID,Decimal Token ID Repr"]
     enslist += [i.getcsv() for i in domains]
     with open(f"./output/{NAMES}.csv", 'w') as file:
         file.write("\n".join(enslist))
 
+# Saves valid words and words seperated by length
 def savewords(words: list[str]):
     with open(f"./output/{VALIDWORDS}.txt", 'w') as file:
         file.write("\n".join(words))
@@ -143,24 +153,36 @@ def savewords(words: list[str]):
         counted += len(validwords)
         length += 1
 
-def main():
-    words, numinvalid = getwords()
-    domaindata = getlistingdata(words)
-    domainobjs = getdomains(words, domaindata)
-    makeoutputdir()
-    numavailable = saveavailable(domainobjs)
-    savemaincsv(domainobjs)
-    savewords(words)
-    
-    numpremium = len([d for d in domainobjs if d.enstype is ENSType.PREMIUM])
+# Print summary information
+def summaryprint(start: datetime.datetime,
+                 words: list[str],
+                 numinvalid: int,
+                 domainobjs: list[ENSListing]):
+    numpremium = len([d for d in domainobjs if d._enstype is ENSType.PREMIUM])
     numvalid = len(words)
+    numavailable = len([i.name for i in domainobjs if i._enstype is ENSType.NEW or i._enstype is ENSType.EXPIRED])
     totalwords = numvalid+numinvalid
-    print("ENS Bulk Search completed. Files have been outputted to ./output\n"
+    elapsed = (datetime.datetime.now() - start).total_seconds()
+    pastday = len(['' for i in domainobjs if i.registrationdate and i.registrationdate > (datetime.datetime.now()-datetime.timedelta(days=1))])
+    print(f"ENS bulk search completed in {elapsed:.2f} seconds. "
+          "Files have been outputted to ./output\n"
           f"{totalwords} Words Searched | "
           f"{numvalid} Valid ({(numvalid*100.0)/totalwords:.2f}%) | "
           f"{numinvalid} Invalid ({(numinvalid*100.0)/totalwords:.2f}%)\n"
           f"{numavailable} Available ({(numavailable*100.0)/numvalid:.2f}%) | "
-          f"{numpremium} Premium ({(numpremium*100.0)/numvalid:.2f}%)")
+          f"{numpremium} Premium ({(numpremium*100.0)/numvalid:.2f}%) | "
+          f"{pastday} registered in the past day ({(pastday*100.0)/(numavailable+pastday):.2f}% of words remaining a day ago)")
+
+def main():
+    start = datetime.datetime.now()
+    words, numinvalid = getwords()
+    domaindata = getlistingdata(words)
+    domainobjs = getdomains(words, domaindata)
+    makeoutputdir()
+    saveavailable(domainobjs)
+    savewords(words)
+    savemaincsv(domainobjs)
+    summaryprint(start, words, numinvalid, domainobjs)
 
 if __name__ == '__main__':
     main()
