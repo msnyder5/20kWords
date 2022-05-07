@@ -67,7 +67,7 @@ def getwords():
         lines = txtfile.readlines()
     words = [line[:-1] if '\n' in line else line for line in lines]
     validwords = [name for name in words if len(name) > 2]
-    return validwords
+    return validwords, len(words)-len(validwords)
 
 # Get the data for each domain
 def getlistingdata(words: list[str]):
@@ -121,6 +121,7 @@ def saveavailable(domains: list[ENSListing]):
     enslist = [i.name for i in domains if i.enstype is ENSType.NEW or i.enstype is ENSType.EXPIRED]
     with open(f"./output/{AVAILABLE}.txt", 'w') as file:
         file.write("\n".join(enslist))
+    return len(enslist)
 
 # Saves a CSV containing data for all of the domains provided
 def savemaincsv(domains: list[ENSListing]):
@@ -143,13 +144,23 @@ def savewords(words: list[str]):
         length += 1
 
 def main():
-    words = getwords()
+    words, numinvalid = getwords()
     domaindata = getlistingdata(words)
     domainobjs = getdomains(words, domaindata)
     makeoutputdir()
-    saveavailable(domainobjs)
+    numavailable = saveavailable(domainobjs)
     savemaincsv(domainobjs)
     savewords(words)
+    
+    numpremium = len([d for d in domainobjs if d.enstype is ENSType.PREMIUM])
+    numvalid = len(words)
+    totalwords = numvalid+numinvalid
+    print("ENS Bulk Search completed. Files have been outputted to ./output\n"
+          f"{totalwords} Words Searched | "
+          f"{numvalid} Valid ({(numvalid*100.0)/totalwords:.2f}%) | "
+          f"{numinvalid} Invalid ({(numinvalid*100.0)/totalwords:.2f}%)\n"
+          f"{numavailable} Available ({(numavailable*100.0)/numvalid:.2f}%) | "
+          f"{numpremium} Premium ({(numpremium*100.0)/numvalid:.2f}%)")
 
 if __name__ == '__main__':
     main()
