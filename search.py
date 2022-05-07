@@ -141,15 +141,10 @@ def getdomains(words: list[str], domaindata: list[dict]):
 # region saving
 
 def makeoutputdir(dirname: str):
-    if dirname == '20kWordClub':
-        if not os.path.exists("./20kWordClub"): os.mkdir("./20kWordClub")
-        if not os.path.exists("./20kWordClub/length"): os.mkdir("./20kWordClub/length")
-        os.chdir(f'./20kWordClub')
-    else:
-        if not os.path.exists("./output"): os.mkdir("./output")
-        if not os.path.exists(f"./output/{dirname}"): os.mkdir(f"./output/{dirname}")
-        if not os.path.exists(f"./output/{dirname}/length"): os.mkdir(f"./output/{dirname}/length")
-        os.chdir(f'./output/{dirname}')
+    if not os.path.exists("./output"): os.mkdir("./output")
+    shutil.rmtree(f"./output/{dirname}")
+    os.mkdir(f"./output/{dirname}")
+    os.chdir(f'./output/{dirname}')
 
 # Saves a text file with all the non-premium words
 def saveavailable(domains: list[ENSListing]):
@@ -166,9 +161,8 @@ def savevalid(words: list[str]):
 def savelength(words: list[str]):
     lengthdict = defaultdict(list)
     for word in words: lengthdict[len(word)].append(word)
-    if not (len(words)*0.5 > len(lengthdict) > 1):
-        shutil.rmtree('./length')
-        return
+    if not (len(words)*0.5 > len(lengthdict) > 1): return
+    os.mkdir(f"./length")
     for i, iwords in lengthdict.items():
         with open(f"./length/{i} chars.txt", 'w', encoding='utf-8') as file:
             file.write("\n".join(iwords))
@@ -242,7 +236,7 @@ def main():
         if config.LENGTH: savelength(words)
         if config.DOMAINS: savedomains(domainobjs)
         if config.WHALES: savewhales(domainobjs)
-        os.chdir('..') if dirname == '20kWordClub' else os.chdir('../..')
+        os.chdir('../..')
         update = config.README and dirname == '20kWordClub'
         readmeandprint(start, words, numinvalid, domainobjs, update)
 
