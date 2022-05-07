@@ -1,9 +1,11 @@
 import os
+import re
 import grequests
 from enum import Enum
 import datetime
 from Crypto.Hash import keccak
 from dataclasses import dataclass
+import chardet
 
 INPUT = './input/top20kwords.txt'
 AVAILABLE = 'available'
@@ -85,6 +87,7 @@ def getids(name: str, hexonly=False):
 def getwords():
     with open(INPUT) as txtfile:
         lines = txtfile.readlines()
+    print(f"\nBulk searching {len(lines)} words...\n")
     words = [line[:-1] if '\n' in line else line for line in lines]
     validwords = [name for name in words if len(name) > 2]
     return validwords, len(words)-len(validwords)
@@ -152,25 +155,39 @@ def savewords(words: list[str]):
         counted += len(validwords)
         length += 1
 
-# Print summary information
-def summaryprint(start: datetime.datetime,
-                 words: list[str],
-                 numinvalid: int,
-                 domainobjs: list[ENSListing]):
-    numpremium = len([d for d in domainobjs if d._enstype is ENSType.PREMIUM])
+# Update readme and print summary
+def readmeandprint(start: datetime.datetime,
+                   words: list[str],
+                   numinvalid: int,
+                   domainobjs: list[ENSListing]):
     numvalid = len(words)
     numavailable = len([i.name for i in domainobjs if i._enstype is ENSType.NEW or i._enstype is ENSType.EXPIRED])
-    totalwords = numvalid+numinvalid
-    elapsed = (datetime.datetime.now() - start).total_seconds()
+    numpremium = len([d for d in domainobjs if d._enstype is ENSType.PREMIUM])
     pastday = len(['' for i in domainobjs if i.registrationdate and i.registrationdate > (datetime.datetime.now()-datetime.timedelta(days=1))])
-    print(f"ENS bulk search completed in {elapsed:.2f} seconds. "
+    elapsed = (datetime.datetime.now() - start).total_seconds()
+    totalwords = numvalid+numinvalid
+    updatereadme(numvalid, numavailable, pastday)
+    print(f"ENS bulk search completed in {elapsed:.2f} seconds.\n"
           "Files have been outputted to ./output\n"
           f"{totalwords} Words Searched\n"
           f"{numvalid} Valid ({(numvalid*100.0)/totalwords:.2f}%)\n"
           f"{numinvalid} Invalid ({(numinvalid*100.0)/totalwords:.2f}%)\n"
-          f"{numavailable} Available ({(numavailable*100.0)/numvalid:.2f}%)\n"
-          f"{numpremium} Premium ({(numpremium*100.0)/numvalid:.2f}%)\n"
-          f"{pastday} registered in the past day ({(pastday*100.0)/(numavailable+pastday):.2f}% of words remaining a day ago)")
+          f"{numavailable} Available for base price ({(numavailable*100.0)/numvalid:.2f}%)\n"
+          f"{numpremium} Available for premium price ({(numpremium*100.0)/numvalid:.2f}%)\n"
+          f"{pastday} Registered in the past day ({(pastday*100.0)/(numavailable+pastday):.2f}%)\n")
+
+# Autoupdate readme with new statistics (can be disabled)
+def updatereadme(numvalid: int, numavailable: int, pastday: int):
+    with open("README.md", 'r', encoding='utf-16') as readme:
+        rmstr = readme.read()
+        rmstr = re.sub(r"As of last check \([^\)]+\) \d+ words are available \(\d+\.\d+%\)",
+                       f"As of last check ({datetime.datetime.now().strftime('%Y-%m-%d %X')} EST) {numavailable} words are available ({(numavailable*100.0)/numvalid:.2f}%)",
+                       rmstr)
+        rmstr = re.sub(r"with \d+ sales in the past day",
+                       f"with {pastday} sales in the past day",
+                       rmstr)
+    with open("README.md", 'w', encoding='utf-16') as readme:
+        readme.write(rmstr)
 
 def main():
     start = datetime.datetime.now()
@@ -181,7 +198,7 @@ def main():
     saveavailable(domainobjs)
     savewords(words)
     savemaincsv(domainobjs)
-    summaryprint(start, words, numinvalid, domainobjs)
+    readmeandprint(start, words, numinvalid, domainobjs)
 
 if __name__ == '__main__':
     main()
