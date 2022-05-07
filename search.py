@@ -7,6 +7,7 @@ import datetime
 from Crypto.Hash import keccak
 from dataclasses import dataclass
 import config
+import shutil
 
 URL = "https://api.thegraph.com/subgraphs/name/ensdomains/ens"
 QUERY = "\n        query getName($ids: [ID!]) {\n          registrations(where: { id_in: $ids }) {\n            id\n            labelName\n            expiryDate\n            registrationDate\n          }\n        }\n    "
@@ -154,7 +155,7 @@ def savelength(words: list[str]):
     lengthdict = defaultdict(list)
     for word in words: lengthdict[len(word)].append(word)
     if not (len(words)*0.5 > len(lengthdict) > 2):
-        os.rmdir('./length')
+        shutil.rmtree('./length')
         return
     for i, iwords in lengthdict.items():
         with open(f"./length/{i} chars.txt", 'w') as file:
