@@ -56,8 +56,7 @@ class ENSListing():
 
     # Get line string for csv output
     def getcsv(self):
-        if self._enstype in [ENSType.NEW, ENSType.EXPIRED]: url = f"https://app.ens.domains/name/{self.name}.eth/register"
-        else: url = f"https://opensea.io/assets/0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85/{self._decid}"
+        url = f"https://opensea.io/assets/0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85/{self._decid}" if self._enstype is ENSType.OWNED else f"https://app.ens.domains/name/{self.name}.eth/register"
         attrs = [self.name,
                  len(self.name),
                  self._enstype.value,
@@ -154,7 +153,7 @@ def savevalid(words: list[str]):
 def savelength(words: list[str]):
     lengthdict = defaultdict(list)
     for word in words: lengthdict[len(word)].append(word)
-    if len(words)*0.5 < len(lengthdict) < 2:
+    if not (len(words)*0.5 > len(lengthdict) > 2):
         os.rmdir('./length')
         return
     for i, iwords in lengthdict.items():
