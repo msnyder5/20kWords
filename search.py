@@ -154,7 +154,7 @@ def savevalid(words: list[str]):
 def savelength(words: list[str]):
     lengthdict = defaultdict(list)
     for word in words: lengthdict[len(word)].append(word)
-    if not (len(words)*0.5 > len(lengthdict) > 2):
+    if not (len(words)*0.5 > len(lengthdict) > 1):
         shutil.rmtree('./length')
         return
     for i, iwords in lengthdict.items():
