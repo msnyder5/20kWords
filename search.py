@@ -142,7 +142,7 @@ def getdomains(words: list[str], domaindata: list[dict]):
 
 def makeoutputdir(dirname: str):
     if not os.path.exists("./output"): os.mkdir("./output")
-    shutil.rmtree(f"./output/{dirname}")
+    if os.path.exists(f"./output/{dirname}"): shutil.rmtree(f"./output/{dirname}")
     os.mkdir(f"./output/{dirname}")
     os.chdir(f'./output/{dirname}')
 

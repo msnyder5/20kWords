@@ -2511,7 +2511,6 @@ wdtrade
 streetchurros
 protheus
 thedubs
-aquatalia
 extruded
 quickys
 kanbing
@@ -13970,7 +13969,6 @@ teamchat
 variabledisplay
 agentbox
 selexion
-ganbatte
 japanparts
 seria-group
 reisebus24
