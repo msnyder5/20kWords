@@ -10,7 +10,20 @@ import config
 import shutil
 
 URL = "https://api.thegraph.com/subgraphs/name/ensdomains/ens"
-QUERY = "\n        query getName($ids: [ID!]) {\n          registrations(where: { id_in: $ids }) {\n            id\n            labelName\n            expiryDate\n            registrationDate\n          }\n        }\n    "
+QUERY = """
+query getENSData($labelName_in: [String!]) {
+  registrations(where: {labelName_in: $labelName_in}) {
+    labelName
+    expiryDate
+    registrationDate
+    domain {
+      owner {
+        id
+      }
+      createdAt
+    }
+  }
+}""".strip()
 
 # Enum to track the listing status
 class ENSType(Enum):
@@ -24,13 +37,13 @@ class ENSType(Enum):
 @dataclass
 class ENSListing():
     name: str
+    owner: str = None
+    creationdate: datetime.datetime = None
     expirydate: datetime.datetime = None
     registrationdate: datetime.datetime = None
     # daysold: float = None
     
     # Generated 
-    _hexid: str = None
-    _decid: int = None
     _gracedate: datetime.datetime = None
     _premiumdate: datetime.datetime = None
     _enstype: ENSType = None
@@ -38,9 +51,6 @@ class ENSListing():
     
     # Get Hex and Decimal ID
     def __post_init__(self):
-        hexid, decid = getids(self.name)
-        self._hexid = hexid
-        self._decid = decid
         if self.registrationdate or self.expirydate:
             self._gracedate = self.expirydate + datetime.timedelta(days=90.0)
             self._premiumdate = self.expirydate + datetime.timedelta(days=111.0)
@@ -55,27 +65,27 @@ class ENSListing():
         else:
             self._enstype = ENSType.NEW
 
+    def decid(self):
+        hasher = keccak.new(digest_bits=256)
+        hasher.update(self.name.encode('utf-8'))
+        hex = hasher.hexdigest()
+        return int(hex, 16)
+
     # Get line string for csv output
     def getcsv(self):
-        url = f"https://opensea.io/assets/0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85/{self._decid}" if self._enstype is ENSType.OWNED else f"https://app.ens.domains/name/{self.name}.eth/register"
+        url = f"https://opensea.io/assets/0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85/{self.decid()}" if self._enstype is ENSType.OWNED else f"https://app.ens.domains/name/{self.name}.eth/register"
         attrs = [self.name,
+                 self.owner,
                  len(self.name),
                  self._enstype.value,
                  self._premium,
                  url,
+                 self.creationdate,
                  self.registrationdate,
                  self.expirydate,
                  self._gracedate,
                  self._premiumdate]
         return ",".join([str(i) if i else '' for i in attrs])
-
-def getids(name: str, hexonly=False):
-    hasher = keccak.new(digest_bits=256)
-    hasher.update(name.encode('utf-8'))
-    hex = hasher.hexdigest()
-    dec = int(hex, 16)
-    if hexonly: return f"0x{hex}"
-    return f"0x{hex}", dec
 
 # Get a list of all of the valid words.
 def getwords(dirname: str):
@@ -88,14 +98,12 @@ def getwords(dirname: str):
 
 # Get the data for each domain
 def getlistingdata(words: list[str]):
-    chunks = [words[i:i+100] for i in range(0, len(words), 100)]
-    ensidslist = [[getids(i, True) for i in chunk] for chunk in chunks]
-    rjsons = [{
-        "query": QUERY,
-        "variables": {
-            "ids": ensids
-        }
-    } for ensids in ensidslist]
+    rate = 100 #50 if max([len(i) for i in words]) > 256 else 5000
+    chunks = [words[i:i+rate] for i in range(0, len(words), rate)]
+    rjsons = [{"query": QUERY,
+             "variables": {
+                "labelName_in": chunk
+            }} for chunk in chunks]
     requests = (grequests.post(url=URL, json=rjson) for rjson in rjsons)
     responses = grequests.map(requests)
     datachunks = [r.json()["data"]["registrations"] for r in responses]
@@ -122,11 +130,15 @@ def getdomains(words: list[str], domaindata: list[dict]):
     # Add Other Domains
     def generateenslisting(entry: dict):
         name = entry["labelName"]
+        owner = entry["domain"]["owner"]["id"]
+        createddt = datetime.datetime.fromtimestamp(float(entry["domain"]["createdAt"]))
         expirydt = datetime.datetime.fromtimestamp(float(entry["expiryDate"]))
         registrationdt = datetime.datetime.fromtimestamp(float(entry["registrationDate"]))
-        return ENSListing(name, expirydt, registrationdt)
+        return ENSListing(name, owner, createddt, expirydt, registrationdt)
     domains += [generateenslisting(entry) for entry in domaindata]
     return sortdomains(words, domains)
+
+# region saving
 
 def makeoutputdir(dirname: str):
     if dirname == '20kWordClub':
@@ -163,7 +175,7 @@ def savelength(words: list[str]):
 
 # Saves a CSV containing data for all of the domains provided
 def savemaincsv(domains: list[ENSListing]):
-    enslist = ["Name,Length,Status,Premium,URL,Registered,Expires,Grace Period Ends,Price Premium Ends"]
+    enslist = ["Name,Current Owner,Length,Status,Premium,URL,Created,Registered,Expires,Grace Period Ends,Price Premium Ends"]
     enslist += [i.getcsv() for i in domains]
     with open(f"domains.csv", 'w') as file:
         file.write("\n".join(enslist))
@@ -199,6 +211,8 @@ def updatereadme(numavailable: int, pastday: int):
                        rmstr)
     with open("README.md", 'w', encoding='utf-16') as readme:
         readme.write(rmstr)
+
+# endregion
 
 def main():
     # Getting data
