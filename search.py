@@ -6,8 +6,6 @@ from enum import Enum
 import datetime
 from Crypto.Hash import keccak
 from dataclasses import dataclass
-
-from tqdm import tqdm
 import config
 
 URL = "https://api.thegraph.com/subgraphs/name/ensdomains/ens"
