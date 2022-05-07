@@ -10,7 +10,7 @@
 # 7 - Expiry date (newest to oldest)        #
 # 8 - Expiry date (oldest to newest)        #
 # # # # # # # # # # # # # # # # # # # # # # #
-SORTBY = 8
+SORTBY = 1
 
 
 
