@@ -165,11 +165,11 @@ def summaryprint(start: datetime.datetime,
     pastday = len(['' for i in domainobjs if i.registrationdate and i.registrationdate > (datetime.datetime.now()-datetime.timedelta(days=1))])
     print(f"ENS bulk search completed in {elapsed:.2f} seconds. "
           "Files have been outputted to ./output\n"
-          f"{totalwords} Words Searched | "
-          f"{numvalid} Valid ({(numvalid*100.0)/totalwords:.2f}%) | "
+          f"{totalwords} Words Searched\n"
+          f"{numvalid} Valid ({(numvalid*100.0)/totalwords:.2f}%)\n"
           f"{numinvalid} Invalid ({(numinvalid*100.0)/totalwords:.2f}%)\n"
-          f"{numavailable} Available ({(numavailable*100.0)/numvalid:.2f}%) | "
-          f"{numpremium} Premium ({(numpremium*100.0)/numvalid:.2f}%) | "
+          f"{numavailable} Available ({(numavailable*100.0)/numvalid:.2f}%)\n"
+          f"{numpremium} Premium ({(numpremium*100.0)/numvalid:.2f}%)\n"
           f"{pastday} registered in the past day ({(pastday*100.0)/(numavailable+pastday):.2f}% of words remaining a day ago)")
 
 def main():
