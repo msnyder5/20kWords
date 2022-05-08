@@ -348,7 +348,6 @@ september08
 nov3
 nov4
 nov5
-nov6
 nov7
 nov1st
 nov2nd
@@ -1204,7 +1203,6 @@ january08
 january09
 mar3
 mar4
-mar5
 mar6
 mar7
 mar9
@@ -1284,11 +1282,6 @@ august04
 august06
 august07
 august09
-oct2
-oct3
-oct4
-oct5
-oct6
 oct1st
 oct2nd
 oct3rd
@@ -2351,7 +2344,6 @@ december-31st
 01-29th
 01-30th
 01-31st
-3-11
 3-12
 3-13
 3-15
@@ -2638,7 +2630,6 @@ december-31st
 8-19
 8-20
 8-21
-8-22
 8-23
 8-25
 8-26

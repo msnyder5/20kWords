@@ -18,9 +18,7 @@ player68
 player71
 player72
 player73
-player75
 player76
-player81
 player83
 player84
 player87
@@ -29,7 +27,6 @@ player92
 player93
 player94
 player95
-player96
 player97
 player98
 player101
@@ -58,7 +55,6 @@ player125
 player126
 player127
 player128
-player129
 player130
 player131
 player132
@@ -429,7 +425,6 @@ player501
 player502
 player503
 player504
-player505
 player506
 player507
 player508

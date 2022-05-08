@@ -208,6 +208,7 @@ def readmeandprint(start: datetime.datetime,
     if numpremium: printstr += f"{numpremium} Available for premium price ({(numpremium*100.0)/numvalid:.2f}%)\n"
     if numavailable: printstr += f"{pastday} Registered in the past day ({(pastday*100.0)/(numavailable+pastday):.2f}%)\n"
     print(printstr)
+    return pastday
 
 # Autoupdate readme with new statistics (can be disabled)
 def updatereadme(numavailable: int, pastday: int):
@@ -223,6 +224,7 @@ def updatereadme(numavailable: int, pastday: int):
 
 def main():
     # Getting data
+    total = 0
     for filename in os.listdir('./input'):
         dirname = filename.removesuffix('.txt')
         start = datetime.datetime.now()
@@ -238,7 +240,8 @@ def main():
         if config.WHALES: savewhales(domainobjs)
         os.chdir('../..')
         update = config.README and dirname == '20kWordClub'
-        readmeandprint(start, words, numinvalid, domainobjs, update)
+        total += readmeandprint(start, words, numinvalid, domainobjs, update)
+    print(f"Total of {total} ENS registered in the past day in all searched files.\n")
 
 if __name__ == '__main__':
     main()

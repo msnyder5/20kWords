@@ -268,7 +268,6 @@ ppyy
 qqaa
 qqcc
 qqee
-qqff
 qqhh
 qqii
 qqjj
@@ -299,7 +298,6 @@ rrll
 rrmm
 rrnn
 rroo
-rrpp
 rrqq
 rrtt
 rruu
