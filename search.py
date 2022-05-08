@@ -93,7 +93,7 @@ def getwords(dirname: str):
         lines = txtfile.readlines()
     print(f"\nBulk searching {len(lines)} words in {dirname}.txt...")
     words = [line[:-1] if '\n' in line else line for line in lines]
-    validwords = [name for name in words if len(name) > 2]
+    validwords = [name for name in words if len(name) > 2 and re.search(r'[\[\] \.\_\+\\]', name) is None]
     return validwords, len(words)-len(validwords)
 
 # Get the data for each domain

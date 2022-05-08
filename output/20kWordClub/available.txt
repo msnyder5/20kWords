@@ -12,7 +12,6 @@ cosponsors
 tittens
 italicized
 investigating
-newsgroups
 assisting
 appellant
 comprises
@@ -327,7 +326,6 @@ netware
 dhtml
 emphasizes
 libtool
-numbering
 conftest
 registerregister
 additives

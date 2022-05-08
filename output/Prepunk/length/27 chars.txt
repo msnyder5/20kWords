@@ -1,6 +1,8 @@
 internationalshipregistries
+cryptocurrencyandblockchain
 universityofbritishcolumbia
 mallinckrodtpharmaceuticals
+enterprisesoftwaresolutions
 basellandschaftlichezeitung
 chinacommunicationsservices
 cashruleseverythingaroundme
@@ -8,10 +10,12 @@ securityindustryspecialists
 commonwealthbankofaustralia
 democraticnationalcommittee
 private-krankenversicherung
+volkswagenfinancialservices
 sayn-wittgenstein-berleburg
 deutscheanningtonimmobilien
 republicannationalcommittee
 industrialallianceinsurance
+technicaluniversityofmunich
 libertymutualinsurancegroup
 engineeredspecialtyproducts
 catholicmedicalmissionboard
@@ -19,5 +23,7 @@ theagainstmalariafoundation
 commercialinternationalbank
 mitsubishiufjfinancialgroup
 unitedstatesgolfassociation
+centralcounterpartyclearing
+lacasadelosaromasdirectshop
 englishtospanishtranslation
 nationalsubrogationservices
