@@ -17,7 +17,6 @@ truserv
 solutia
 mandalayresortgroup
 firsttennessee
-lpcorp
 bwauto
 kellwood
 drivebudget

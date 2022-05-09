@@ -80,7 +80,6 @@ amgreetings
 pepcoconnect
 sabrecorp
 firsttennessee
-lpcorp
 weatherfordcorp
 valuecityfurn
 kellwoodcompany
@@ -119,7 +118,6 @@ comfortusa
 rgande
 amkortechnology
 mercuryins
-tdbankus
 veritastechllc
 archcoal
 aerojetrdyne

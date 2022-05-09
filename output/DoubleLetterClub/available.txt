@@ -92,7 +92,6 @@ ffyy
 ffzz
 ggaa
 ggbb
-ggdd
 ggff
 ggii
 ggjj
@@ -132,7 +131,6 @@ iidd
 iiee
 iiff
 iihh
-iijj
 iikk
 iimm
 iinn
@@ -275,7 +273,6 @@ qqll
 qqmm
 qqnn
 qqoo
-qqrr
 qqss
 qqtt
 qquu
@@ -313,7 +310,6 @@ ssmm
 ssnn
 sspp
 ssqq
-sstt
 ssuu
 ssvv
 ssww
@@ -400,7 +396,6 @@ wwrr
 wwss
 wwtt
 wwuu
-wwxx
 wwzz
 xxff
 xxgg

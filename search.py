@@ -1,4 +1,5 @@
 from collections import defaultdict
+from glob import glob
 import os
 import re
 import grequests
@@ -91,9 +92,9 @@ class ENSListing():
 
 # Get a list of all of the valid words.
 def getwords(dirname: str):
-    with open(f"./input/{dirname}.txt", encoding='utf-8') as txtfile:
+    with open(dirname, encoding='utf-8') as txtfile:
         lines = txtfile.readlines()
-    print(f"\nBulk searching {len(lines)} words in {dirname}.txt...")
+    print(f"\nBulk searching {len(lines)} words in {dirname}...")
     words = [line[:-1] if '\n' in line else line for line in lines]
     validwords = [name for name in words if len(name) > 2 and re.search(r'[\[\] \.\_\+\\]', name) is None]
     return validwords, len(words)-len(validwords)
@@ -148,10 +149,13 @@ def getdomains(words: list[str], domaindata: list[dict]):
 # region saving
 
 def makeoutputdir(dirname: str):
-    if not os.path.exists("./output"): os.mkdir("./output")
-    if os.path.exists(f"./output/{dirname}"): shutil.rmtree(f"./output/{dirname}")
-    os.mkdir(f"./output/{dirname}")
-    os.chdir(f'./output/{dirname}')
+    outputdir = dirname.removesuffix(".txt").replace("input", "output", 1)
+    os.makedirs(outputdir, exist_ok=True)
+    os.chdir(outputdir)
+    # if not os.path.exists("./output"): os.mkdir("./output")
+    # if os.path.exists(f"./output/{dirname}"): shutil.rmtree(f"./output/{dirname}")
+    # os.mkdir(f"./output/{dirname}")
+    # os.chdir(f'./output/{dirname}')
 
 # Saves a text file with all the non-premium words
 def saveavailable(domains: list[ENSListing]):
@@ -199,14 +203,15 @@ def readmeandprint(start: datetime.datetime,
                    words: list[str],
                    numinvalid: int,
                    domainobjs: list[ENSListing],
-                   update = False):
+                   update = False,
+                   readmepath = ""):
     numvalid = len(words)
     numavailable = len([i.name for i in domainobjs if i._enstype is ENSType.NEW or i._enstype is ENSType.EXPIRED])
     numpremium = len([d for d in domainobjs if d._enstype is ENSType.PREMIUM])
     pastday = len(['' for i in domainobjs if i.registrationdate and i.registrationdate > (datetime.datetime.now()-datetime.timedelta(days=1))])
     elapsed = (datetime.datetime.now() - start).total_seconds()
     totalwords = numvalid+numinvalid
-    if update: updatereadme(numavailable, pastday)
+    if update: updatereadme(numavailable, pastday, readmepath)
     printstr = (f"ENS bulk search completed in {elapsed:.2f} seconds.\n"
                 f"{totalwords} Words Searched\n"
                 f"{numvalid} Valid ({(numvalid*100.0)/totalwords:.2f}%)\n"
@@ -218,13 +223,13 @@ def readmeandprint(start: datetime.datetime,
     return pastday
 
 # Autoupdate readme with new statistics (can be disabled)
-def updatereadme(numavailable: int, pastday: int):
-    with open("README.md", 'r', encoding='utf-16') as readme:
+def updatereadme(numavailable: int, pastday: int, readmepath: str):
+    with open(readmepath, 'r', encoding='utf-16') as readme:
         rmstr = readme.read()
         rmstr = re.sub(r"As of last update, \d+ words are available, with \d+ sales in the past day",
                        f"As of last update, {numavailable} words are available, with {pastday} sales in the past day",
                        rmstr)
-    with open("README.md", 'w', encoding='utf-16') as readme:
+    with open(readmepath, 'w', encoding='utf-16') as readme:
         readme.write(rmstr)
 
 # endregion
@@ -232,22 +237,21 @@ def updatereadme(numavailable: int, pastday: int):
 def main():
     # Getting data
     total = 0
-    for filename in os.listdir('./input'):
-        dirname = filename.removesuffix('.txt')
+    readmepath = os.path.join(os.getcwd(), "README.md")
+    for filename in glob(os.path.join(os.getcwd(), "input/**/*.txt"), recursive=True):
         start = datetime.datetime.now()
-        words, numinvalid = getwords(dirname)
+        words, numinvalid = getwords(filename)
         domaindata = getlistingdata(words)
         domainobjs = getdomains(words, domaindata)
         # Outputs
-        makeoutputdir(dirname)
+        makeoutputdir(filename)
         if config.AVAILABLE: saveavailable(domainobjs)
         if config.VALID and numinvalid: savevalid(words)
         if config.LENGTH: savelength(words)
         if config.DOMAINS: savedomains(domainobjs)
         if config.WHALES: savewhales(domainobjs)
-        os.chdir('../..')
-        update = config.README and dirname == '20kWordClub'
-        total += readmeandprint(start, words, numinvalid, domainobjs, update)
+        update = config.README and '20kWordClub' in filename
+        total += readmeandprint(start, words, numinvalid, domainobjs, update, readmepath)
     print(f"Total of {total} ENS registered in the past day in all searched files.\n")
 
 if __name__ == '__main__':
