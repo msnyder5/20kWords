@@ -16,6 +16,7 @@ staffleasing
 hiltonhotels
 neimanmarcus
 hermanmiller
+brown-forman
 jackinthebox
 flowersfoods
 pier1imports

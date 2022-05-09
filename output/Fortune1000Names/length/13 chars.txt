@@ -1,7 +1,5 @@
-walmartstores
 generalmotors
 chevrontexaco
-kimberlyclark
 marshmclennan
 suntrustbanks
 ppgindustries
@@ -12,7 +10,6 @@ kellyservices
 averydennison
 pepsiamericas
 unitedrentals
-albertoculver
 sabreholdings
 analogdevices
 inglesmarkets

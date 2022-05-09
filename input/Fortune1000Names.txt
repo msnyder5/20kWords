@@ -1,4 +1,4 @@
-walmartstores
+wal-martstores
 generalmotors
 generalelectric
 chevrontexaco
@@ -12,7 +12,7 @@ jpmorganchaseco
 cardinalhealth
 merck
 statefarminsurancecos
-hewlettpackard
+hewlett-packard
 mckesson
 merrilllynch
 albertsons
@@ -36,12 +36,12 @@ delphi
 sprint
 newyorklifeinsurance
 eidupontdenemours
-georgiapacific
+georgia-pacific
 waltdisney
 aetna
 lockheedmartin
 bankonecorp
-tiaacref
+tiaa-cref
 phillipspetroleum
 honeywellinternational
 unitedhealthgroup
@@ -52,7 +52,7 @@ wachoviacorp
 ciscosystems
 cvs
 lowes
-bristolmyerssquibb
+bristol-myerssquibb
 electronicdatasystems
 autonation
 qwestcommunications
@@ -71,7 +71,7 @@ exelon
 nationwide
 xcelenergy
 mcdonalds
-kimberlyclark
+kimberly-clark
 maydepartmentstores
 goodyeartirerubber
 gap
@@ -81,7 +81,7 @@ halliburton
 deere
 eastmankodak
 circuitcitystores
-winndixiestores
+winn-dixiestores
 avnet
 wellpointhealthnetworks
 sunoco
@@ -103,11 +103,11 @@ mbna
 arrowelectronics
 marshmclennan
 publicserviceenterprisegroup
-scheringplough
+schering-plough
 comcast
 aflac
 hjheinz
-colgatepalmolive
+colgate-palmolive
 limited
 johnhancockfinancialservices
 burlingtonnorthernsantafe
@@ -183,7 +183,7 @@ wwgrainger
 dolefood
 ittindustries
 kbhome
-mcgrawhill
+mcgraw-hill
 officemax
 parkplaceentertainment
 sierrapacificresources
@@ -219,7 +219,7 @@ firstamericancorp
 ball
 familydollarstores
 biglots
-coremarkinternational
+core-markinternational
 shopkostores
 pugetenergy
 burlingtonresources
@@ -263,7 +263,7 @@ americangreetings
 readersdigestassociation
 potomacelectricpower
 petsmart
-albertoculver
+alberto-culver
 sabreholdings
 mandalayresortgroup
 firsttennesseenationalcorp
@@ -273,7 +273,7 @@ burlingtoncoatfactory
 washingtonpost
 erieinsurancegroup
 wendysinternational
-louisianapacific
+louisiana-pacific
 ecolab
 borgwarner
 weatherfordinternational
@@ -283,12 +283,12 @@ kellwood
 belk
 analogdevices
 wholefoodsmarket
-lazboy
+la-z-boy
 hermanmiller
 budgetgroup
 bjservices
 tellabs
-pepboysmanny,moejack
+pepboys-manny,moejack
 cintas
 alaskaairgroup
 outbacksteakhouse
@@ -317,7 +317,7 @@ travelcentersofamerica
 sungarddatasystems
 caseysgeneralstores
 safeguardscientifics
-brownforman
+brown-forman
 ch2mhill
 valspar
 flowserve
@@ -375,7 +375,7 @@ atmosenergy
 teradyne
 americanwaterworks
 cskauto
-phillipsvanheusen
+phillips-vanheusen
 cadencedesignsystems
 sportsauthority
 pier1imports
@@ -388,7 +388,7 @@ nationalruralutilitiescooperative
 transworldentertainment
 americaneagleoutfitters
 nvidia
-gemstartvguideinternational
+gemstar-tvguideinternational
 abercrombiefitch
 novellussystems
 imshealth

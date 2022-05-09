@@ -8,6 +8,7 @@ bakerhughes
 usanetworks
 rydersystem
 barnesnoble
+mcgraw-hill
 administaff
 levistrauss
 pugetenergy
@@ -15,7 +16,6 @@ devonenergy
 budgetgroup
 mdcholdings
 weismarkets
-brownforman
 rentacenter
 perkinelmer
 joannstores

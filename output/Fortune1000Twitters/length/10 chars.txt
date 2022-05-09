@@ -25,7 +25,6 @@ coremarkhq
 apachecorp
 roberthalf
 burlington
-borgwarner
 wholefoods
 cintascorp
 insightent

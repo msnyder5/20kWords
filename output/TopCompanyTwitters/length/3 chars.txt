@@ -1,6 +1,0 @@
-utc
-gap
-csc
-csx
-spg
-amd

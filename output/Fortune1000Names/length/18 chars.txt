@@ -1,5 +1,4 @@
 unitedtechnologies
-bristolmyerssquibb
 abbottlaboratories
 northwesternmutual
 publixsupermarkets
@@ -15,4 +14,5 @@ sungarddatasystems
 southernstatescoop
 symboltechnologies
 americanwaterworks
+phillips-vanheusen
 varcointernational

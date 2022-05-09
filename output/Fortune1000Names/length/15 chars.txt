@@ -1,10 +1,12 @@
 generalelectric
 jpmorganchaseco
+hewlett-packard
+georgia-pacific
 americanexpress
 sunmicrosystems
 northropgrumman
-winndixiestores
 wastemanagement
+schering-plough
 bankofnewyorkco
 lincolnnational
 unitedautogroup

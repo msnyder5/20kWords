@@ -5,6 +5,7 @@ sierrapacificresources
 mutualofomahainsurance
 computerassociatesintl
 echostarcommunications
+core-markinternational
 citizenscommunications
 travelcentersofamerica
 magellanhealthservices

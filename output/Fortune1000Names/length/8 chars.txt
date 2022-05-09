@@ -2,7 +2,6 @@ mckesson
 jcpenney
 motorola
 allstate
-tiaacref
 raytheon
 williams
 southern
@@ -15,6 +14,7 @@ drhorton
 spherion
 petsmart
 kellwood
+la-z-boy
 ch2mhill
 lubrizol
 landsend

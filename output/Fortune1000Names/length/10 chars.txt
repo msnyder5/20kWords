@@ -8,7 +8,6 @@ xcelenergy
 pultehomes
 radioshack
 wwgrainger
-mcgrawhill
 energyeast
 mtbankcorp
 borgwarner
