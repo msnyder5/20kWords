@@ -173,7 +173,7 @@ def savelength(words: list[str]):
     lengthdict = defaultdict(list)
     for word in words: lengthdict[len(word)].append(word)
     if not (len(words)*0.5 > len(lengthdict) > 1): return
-    os.mkdir(f"./length")
+    os.makedirs(os.path.join(os.getcwd(), "length"), exist_ok=True)
     for i, iwords in lengthdict.items():
         with open(f"./length/{i} chars.txt", 'w', encoding='utf-8') as file:
             file.write("\n".join(iwords))
