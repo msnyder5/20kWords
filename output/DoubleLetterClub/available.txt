@@ -104,7 +104,6 @@ ggtt
 gguu
 ggvv
 ggww
-ggxx
 ggzz
 hhaa
 hhcc
@@ -306,7 +305,6 @@ rrww
 rrxx
 rryy
 rrzz
-ssbb
 ssff
 ssgg
 sskk
@@ -322,7 +320,6 @@ ssww
 ssxx
 ssyy
 ttaa
-ttbb
 ttcc
 ttdd
 ttee

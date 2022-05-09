@@ -1,5 +1,4 @@
 feb4
-feb7
 feb8
 feb9
 feb2nd
@@ -175,7 +174,6 @@ february-29th
 2-16
 2-17
 2-18
-2-19
 2-20
 2-25
 2-26
@@ -301,7 +299,6 @@ april09
 june02
 june03
 june04
-june06
 june07
 june08
 sep2
@@ -348,11 +345,9 @@ nov3
 nov4
 nov5
 nov7
-nov1st
 nov2nd
 nov3rd
 nov4th
-nov5th
 nov6th
 nov7th
 nov8th
@@ -1166,7 +1161,6 @@ november-30th
 11-30th
 jan5
 jan6
-jan7
 jan9
 jan4th
 jan5th
@@ -1230,7 +1224,6 @@ mar23rd
 mar24th
 mar25th
 mar26th
-mar27th
 mar28th
 mar29th
 mar30th
@@ -1285,9 +1278,7 @@ oct1st
 oct2nd
 oct3rd
 oct4th
-oct5th
 oct6th
-oct7th
 oct8th
 oct9th
 oct10th

@@ -2,6 +2,8 @@ from collections import defaultdict
 import os
 import re
 import grequests
+import requests
+from requests.adapters import HTTPAdapter, Retry
 from enum import Enum
 import datetime
 from Crypto.Hash import keccak
@@ -104,10 +106,15 @@ def getlistingdata(words: list[str]):
              "variables": {
                 "labelName_in": chunk
             }} for chunk in chunks]
-    requests = (grequests.post(url=URL, json=rjson) for rjson in rjsons)
-    responses = grequests.map(requests)
-    datachunks = [r.json()["data"]["registrations"] for r in responses]
-    return [i for chunk in datachunks for i in chunk]
+    with requests.Session() as s:
+        retries = Retry(total=5, backoff_factor=0.2, status_forcelist=[500, 502, 503, 504], raise_on_redirect=True,
+                        raise_on_status=True)
+        s.mount('http://', HTTPAdapter(max_retries=retries))
+        s.mount('https://', HTTPAdapter(max_retries=retries))
+        reqs = (grequests.post(url=URL, json=rjson, session=s) for rjson in rjsons)
+        responses = grequests.map(reqs)
+        datachunks = [r.json()["data"]["registrations"] for r in responses]
+        return [i for chunk in datachunks for i in chunk]
 
 def sortdomains(words: list[str], domainobjs: list[ENSListing]):
     wordsranks = {d: i for i, d in enumerate(words)}
