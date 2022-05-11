@@ -911,7 +911,6 @@ player995
 player996
 player997
 player998
-player000
 player004
 player005
 player006
@@ -976,7 +975,6 @@ player065
 player066
 player067
 player068
-player069
 player070
 player071
 player072
